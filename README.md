@@ -8,9 +8,7 @@ pnpm dev
 
 ## TODO
 
-- setup ci
-- create reusable habit cards
-- create reusable column component for habits
+- card button should toggle `completed` flag
 - new habit button/modal
 - delete habit
 - db/persistence layer
