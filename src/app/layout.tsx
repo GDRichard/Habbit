@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Header } from "./_components/header";
+
 import "./globals.css";
 
 const inter = Inter({
@@ -21,9 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} antialiased p-8`}>
         <div className="space-y-6">
-          <div className="flex">
-            <h1 className="text-3xl font-bold">Habbit</h1>
-          </div>
+          <Header />
           <div className="max-w-7xl mx-auto">{children}</div>
         </div>
       </body>
