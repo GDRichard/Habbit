@@ -10,12 +10,18 @@ import { Habit, Todo } from "@/types/data";
 import { isHabit } from "@/lib/type-utils";
 
 interface ColumnProps {
+  title: string;
   data: Habit[] | Todo[];
   updateItemStatus: (item: Habit | Todo) => void;
-  title: string;
+  deleteItem: (item: Habit | Todo) => void;
 }
 
-export function Column({ data, updateItemStatus, title }: ColumnProps) {
+export function Column({
+  title,
+  data,
+  updateItemStatus,
+  deleteItem,
+}: ColumnProps) {
   function generateStreakString(item: Habit | Todo) {
     if (isHabit(item)) {
       return `Streak: ${item.streak} ${item.streak === 1 ? "day" : "days"}`;
@@ -29,12 +35,23 @@ export function Column({ data, updateItemStatus, title }: ColumnProps) {
       {data.map((item) => (
         <Card key={item.id}>
           <CardHeader>
-            <CardTitle>{item.name}</CardTitle>
+            <CardTitle>
+              <div className="flex justify-between items-center">
+                <span>{item.name}</span>
+                <Button
+                  className="hover:cursor-pointer text-red-400"
+                  variant="link"
+                  onClick={() => deleteItem(item)}
+                >
+                  Delete
+                </Button>
+              </div>
+            </CardTitle>
             <CardDescription>{generateStreakString(item)}</CardDescription>
           </CardHeader>
           <CardFooter>
             <Button
-              className={`${item.completed ? "bg-green-600" : ""} hover:cursor-pointer w-full`}
+              className={`${item.completed ? "bg-green-600 hover:bg-green-600/90" : ""} hover:cursor-pointer w-full`}
               onClick={() => updateItemStatus(item)}
             >
               {item.completed ? "Completed" : "Mark Complete"}
