@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 import { Column } from "@/components/home/column";
 import { Habit, Todo } from "@/types/data";
 import { isHabit } from "@/lib/type-utils";
+import { ColumnTitle } from "@/lib/constants";
 
 const mockData = {
   habits: [
@@ -41,6 +43,20 @@ export default function Home() {
     updateData(updatedData, isHabit(item));
   }
 
+  function addItem(name: string, columnTitle: string) {
+    const newItem = {
+      id: uuidv4(),
+      name,
+      completed: false,
+    };
+
+    if (columnTitle === ColumnTitle.Habits) {
+      setHabits([...habits, { ...newItem, streak: 0 }]);
+    } else {
+      setTodos([...todos, newItem]);
+    }
+  }
+
   function updateData(updatedData: Habit[] | Todo[], isHabit: boolean) {
     if (isHabit) {
       setHabits(updatedData as Habit[]);
@@ -52,15 +68,17 @@ export default function Home() {
   return (
     <div className="grid grid-cols-2 gap-6">
       <Column
-        title="Habits"
+        title={ColumnTitle.Habits}
         data={habits}
         updateItemStatus={updateItemStatus}
+        addItem={addItem}
         deleteItem={deleteItem}
       />
       <Column
-        title="Todos"
+        title={ColumnTitle.Todos}
         data={todos}
         updateItemStatus={updateItemStatus}
+        addItem={addItem}
         deleteItem={deleteItem}
       />
     </div>
