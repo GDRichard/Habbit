@@ -1,7 +1,10 @@
 "use client";
 
-import { Card } from "@/app/_components/card";
 import { useState } from "react";
+
+import { Column } from "@/components/home/column";
+import { Habit, Todo } from "@/types/data";
+import { isHabit } from "@/lib/type-utils";
 
 // Mock data for habits
 const mockData = {
@@ -23,49 +26,29 @@ export default function Home() {
   const [habits, setHabits] = useState(mockData.habits);
   const [todos, setTodos] = useState(mockData.todos);
 
-  const updateHabitStatus = (id: string) => {
-    const index = habits.findIndex((h) => h.id === id);
-    const habit = habits[index];
-    const updatedHabit = { ...habit, completed: !habit.completed };
-    const updatedHabits = habits.toSpliced(index, 1, updatedHabit);
-    setHabits(updatedHabits);
-  };
+  function updateItemStatus(item: Habit | Todo) {
+    const dataSet = isHabit(item) ? habits : todos;
 
-  const updateTodoStatus = (id: string) => {
-    const index = todos.findIndex((h) => h.id === id);
-    const todo = todos[index];
-    const updatedTodo = { ...todo, completed: !todo.completed };
-    const updatedTodos = todos.toSpliced(index, 1, updatedTodo);
-    setTodos(updatedTodos);
-  };
+    const index = dataSet.findIndex((d) => d.id === item.id);
+    const originalItem = dataSet[index];
+    const updatedItem = { ...originalItem, completed: !originalItem.completed };
+    const updatedDataSet = dataSet.toSpliced(index, 1, updatedItem);
+
+    if (isHabit(item)) {
+      setHabits(updatedDataSet as Habit[]);
+    } else {
+      setTodos(updatedDataSet);
+    }
+  }
 
   return (
     <div className="grid grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Habits</h2>
-        {habits.map((habit) => (
-          <Card
-            key={habit.id}
-            id={habit.id}
-            title={habit.name}
-            streak={habit.streak}
-            isComplete={habit.completed}
-            updateStatus={updateHabitStatus}
-          />
-        ))}
-      </div>
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Todos</h2>
-        {todos.map((todo) => (
-          <Card
-            key={todo.id}
-            id={todo.id}
-            title={todo.name}
-            isComplete={todo.completed}
-            updateStatus={updateTodoStatus}
-          />
-        ))}
-      </div>
+      <Column
+        data={habits}
+        updateItemStatus={updateItemStatus}
+        title="Habits"
+      />
+      <Column data={todos} updateItemStatus={updateItemStatus} title="Todos" />
     </div>
   );
 }
