@@ -8,5 +8,6 @@ pnpm dev
 
 ## TODO
 
-- new habit input
 - db/persistence layer
+- move data update stuff to Column component
+- mobile screen
