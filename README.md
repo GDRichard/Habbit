@@ -8,6 +8,5 @@ pnpm dev
 
 ## TODO
 
-- new habit button/modal
-- delete habit
+- new habit input
 - db/persistence layer

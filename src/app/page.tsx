@@ -6,7 +6,6 @@ import { Column } from "@/components/home/column";
 import { Habit, Todo } from "@/types/data";
 import { isHabit } from "@/lib/type-utils";
 
-// Mock data for habits
 const mockData = {
   habits: [
     { id: "1", name: "Drink 8 glasses of water", streak: 5, completed: false },
@@ -27,28 +26,43 @@ export default function Home() {
   const [todos, setTodos] = useState(mockData.todos);
 
   function updateItemStatus(item: Habit | Todo) {
-    const dataSet = isHabit(item) ? habits : todos;
-
-    const index = dataSet.findIndex((d) => d.id === item.id);
-    const originalItem = dataSet[index];
+    const data = isHabit(item) ? habits : todos;
+    const index = data.findIndex((d) => d.id === item.id);
+    const originalItem = data[index];
     const updatedItem = { ...originalItem, completed: !originalItem.completed };
-    const updatedDataSet = dataSet.toSpliced(index, 1, updatedItem);
+    const updatedData = data.toSpliced(index, 1, updatedItem);
+    updateData(updatedData, isHabit(item));
+  }
 
-    if (isHabit(item)) {
-      setHabits(updatedDataSet as Habit[]);
+  function deleteItem(item: Habit | Todo) {
+    const data = isHabit(item) ? habits : todos;
+    const index = data.findIndex((d) => d.id === item.id);
+    const updatedData = data.toSpliced(index, 1);
+    updateData(updatedData, isHabit(item));
+  }
+
+  function updateData(updatedData: Habit[] | Todo[], isHabit: boolean) {
+    if (isHabit) {
+      setHabits(updatedData as Habit[]);
     } else {
-      setTodos(updatedDataSet);
+      setTodos(updatedData);
     }
   }
 
   return (
     <div className="grid grid-cols-2 gap-6">
       <Column
+        title="Habits"
         data={habits}
         updateItemStatus={updateItemStatus}
-        title="Habits"
+        deleteItem={deleteItem}
       />
-      <Column data={todos} updateItemStatus={updateItemStatus} title="Todos" />
+      <Column
+        title="Todos"
+        data={todos}
+        updateItemStatus={updateItemStatus}
+        deleteItem={deleteItem}
+      />
     </div>
   );
 }
